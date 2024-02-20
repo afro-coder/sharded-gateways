@@ -1,0 +1,20 @@
+gloo:
+  gatewayProxies:
+    gatewayProxy:
+      gatewaySettings:
+        customHttpGateway:
+          options:
+            proxyLatency:
+              measureRequestInternally: true
+              request: FIRST_INCOMING_FIRST_OUTGOING
+              response: LAST_INCOMING_LAST_OUTGOING
+        options:
+          accessLoggingService:
+            accessLog:
+            - fileSink:
+                path: /dev/stdout
+                stringFormat: >
+                  [%START_TIME%] "%REQ(X-ENVOY-ORIGINAL-METHOD?:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%"
+                  %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION%
+                  %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% "%REQ(X-FORWARDED-FOR)%" "%REQ(USER-AGENT)%"
+                  "%REQ(X-REQUEST-ID)%" "%REQ(:AUTHORITY)%" "%UPSTREAM_HOST%" "%DYNAMIC_METADATA(io.solo.filters.http.proxy_latency:request_out)%" "%DYNAMIC_METADATA(io.solo.filters.http.proxy_latency:request_out_internal)%" "%DYNAMIC_METADATA(io.solo.filters.http.proxy_latency:response_out)%"
